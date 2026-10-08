@@ -1,0 +1,20 @@
+{
+  "contact": {
+    "phone": "01XXXXXXXXX",
+    "whatsapp": "8801XXXXXXXXX",
+    "email": "you@example.com",
+    "facebookUrl": "https://facebook.com/your-page",
+    "messengerUrl": "https://m.me/your-page",
+    "address": { "bn": "আপনার দোকানের ঠিকানা", "en": "Your shop address" }
+  },
+  "deliveryZones": [
+    { "key": "dhaka", "name": { "bn": "ঢাকার ভেতরে", "en": "Inside Dhaka" }, "charge": 0 },
+    { "key": "outside", "name": { "bn": "ঢাকার বাইরে", "en": "Outside Dhaka" }, "charge": 0 }
+  ],
+  "payment": {
+    "codEnabled": true,
+    "bkash": { "number": "01XXXXXXXXX", "accountType": "personal" },
+    "nagad": { "number": "01XXXXXXXXX", "accountType": "personal" },
+    "bank": { "bankName": "", "accountName": "", "accountNumber": "", "branch": "" }
+  }
+}

@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens (RGB channels so Tailwind alpha works).
+   Palette: Aubergine + Antique Brass on cool pearl. */
+:root {
+  --bg: 246 245 248;
+  --surface: 255 255 255;
+  --surface-2: 238 235 242;
+  --ink: 29 21 35;
+  --muted: 110 100 120;
+  --line: 224 219 231;
+  --primary: 91 31 78;
+  --primary-fg: 255 255 255;
+  --accent: 184 145 58;
+  --success: 31 157 107;
+  --warning: 224 150 20;
+  --danger: 208 62 62;
+  --info: 52 118 214;
+}
+
+.dark {
+  --bg: 21 15 27;
+  --surface: 33 25 41;
+  --surface-2: 44 34 54;
+  --ink: 244 240 247;
+  --muted: 163 152 175;
+  --line: 62 51 74;
+  --primary: 196 120 178;
+  --primary-fg: 21 15 27;
+  --accent: 214 176 92;
+  --success: 52 190 135;
+  --warning: 240 170 50;
+  --danger: 236 104 104;
+  --info: 100 160 240;
+}
+
+@layer base {
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    @apply bg-bg text-ink font-sans antialiased;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-primary; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Hero stays deep aubergine in both themes */
+  .hero-bg {
+    background:
+      radial-gradient(60% 80% at 85% 10%, rgb(184 145 58 / 0.28), transparent 60%),
+      radial-gradient(70% 90% at 0% 100%, rgb(150 50 120 / 0.45), transparent 60%),
+      linear-gradient(135deg, #2a0d25 0%, #5b1f4e 100%);
+  }
+  .scrollbar-none { scrollbar-width: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+}
