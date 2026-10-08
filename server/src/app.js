@@ -19,8 +19,10 @@ app.use(helmet());
 app.use(
   cors({
     origin: (origin, cb) => {
-      // no Origin header = same-origin / server tools; otherwise only the configured client
-      if (!origin || origin === env.clientUrl) return cb(null, true);
+      if (!origin || origin === env.clientUrl) {
+        return cb(null, true);
+      }
+
       cb(new ApiError(403, 'Not allowed by CORS'));
     },
     credentials: true,
