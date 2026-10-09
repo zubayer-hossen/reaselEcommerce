@@ -17,9 +17,13 @@ export function useSeo({ title, description, image, jsonLd }) {
     const prevTitle = document.title;
     document.title = title;
     const made = [];
+    const previous = new Map();
     const meta = (attr, key, content) => {
+      const selector = `meta[${attr}="${key}"]`;
+      const existing = document.head.querySelector(selector);
+      if (existing) previous.set(selector, existing.getAttribute('content'));
       if (!content) return;
-      const el = upsert(`meta[${attr}="${key}"]`, () => { const m = document.createElement('meta'); m.setAttribute(attr, key); return m; }, (m) => m.setAttribute('content', content));
+      const el = upsert(selector, () => { const m = document.createElement('meta'); m.setAttribute(attr, key); return m; }, (m) => m.setAttribute('content', content));
       if (el) made.push(el);
     };
     meta('name', 'description', description);
@@ -39,6 +43,13 @@ export function useSeo({ title, description, image, jsonLd }) {
       document.head.appendChild(s);
       made.push(s);
     }
-    return () => { document.title = prevTitle; made.forEach((el) => el.remove()); };
+    return () => {
+      document.title = prevTitle;
+      previous.forEach((value, selector) => {
+        const el = document.head.querySelector(selector);
+        if (el) { if (value == null) el.remove(); else el.setAttribute('content', value); }
+      });
+      made.forEach((el) => { if (el.isConnected) el.remove(); });
+    };
   }, [title, description, image, ld]);
 }

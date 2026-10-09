@@ -30,7 +30,7 @@ export default function OrderSuccess() {
   };
   const wa = String(settings?.contact?.whatsapp || '').replace(/[^\d]/g, '');
   const waLink = wa ? `https://wa.me/${wa}?text=${encodeURIComponent(`${t('public.success.waMessage')} ${order.orderNo}`)}` : null;
-  const paid = order.paymentMethod !== 'cod';
+  const paid = true;
 
   return (
     <div className="mx-auto max-w-xl px-4 py-10">
@@ -72,6 +72,8 @@ export default function OrderSuccess() {
           {order.discount > 0 && <div className="flex justify-between text-success"><dt>{t('public.cart.discount')}</dt><dd>-{formatMoney(order.discount, lang)}</dd></div>}
           <div className="flex justify-between"><dt className="text-muted">{t('public.cart.deliveryCharge')}</dt><dd>{formatMoney(order.deliveryCharge, lang)}</dd></div>
           <div className="flex justify-between border-t border-line pt-3 text-lg font-bold"><dt>{t('public.cart.total')}</dt><dd className="text-primary">{formatMoney(order.total, lang)}</dd></div>
+          <div className="flex justify-between text-sm"><dt className="text-muted">{lang === 'bn' ? 'অগ্রিম জমা (যাচাই সাপেক্ষে)' : 'Advance submitted (pending verification)'}</dt><dd>{formatMoney(order.advanceAmount ?? 150, lang)}</dd></div>
+          <div className="flex justify-between text-sm"><dt className="text-muted">{lang === 'bn' ? 'বাকি পরিশোধযোগ্য' : 'Remaining balance'}</dt><dd>{formatMoney(order.balanceDue ?? Math.max(0, order.total - 150), lang)}</dd></div>
           <div className="flex justify-between text-sm"><dt className="text-muted">{t('public.checkout.payment')}</dt><dd>{t(`public.checkout.methods.${order.paymentMethod}`)} · {t(`public.success.pay_${order.paymentStatus}`)}</dd></div>
         </dl>
       </section>

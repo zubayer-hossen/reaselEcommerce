@@ -17,8 +17,10 @@ export default function SupportFab() {
   const c = settings?.contact || {};
   const wa = String(c.whatsapp || '').replace(/[^\d]/g, '');
   const phone = String(c.phone || '').replace(/[^\d+]/g, '');
+  const messenger = /^https:\/\/(www\.)?(m\.me|messenger\.com|facebook\.com\/messages\/t)\//i.test(String(c.messengerUrl || '')) ? c.messengerUrl : '';
   const extras = [
     wa && { key: 'wa', icon: MessageCircle, label: t('public.chat.menuWhatsapp'), href: `https://wa.me/${wa}`, ext: true },
+    messenger && { key: 'messenger', icon: MessageCircle, label: 'Facebook Messenger', href: messenger, ext: true },
     phone && { key: 'call', icon: Phone, label: t('public.chat.menuCall'), href: `tel:${phone}` },
   ].filter(Boolean);
 

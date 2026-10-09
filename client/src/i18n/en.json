@@ -97,7 +97,11 @@
       "newsletterEmail": "Newsletter email",
       "newsletterButton": "Subscribe",
       "newsletterSuccess": "You are subscribed successfully.",
-      "newsletterError": "Could not subscribe. Please try again."
+      "newsletterError": "Could not subscribe. Please try again.",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "returns": "Returns & Refunds",
+      "shipping": "Shipping & Delivery"
     },
     "card": {
       "new": "New",
@@ -440,6 +444,25 @@
         "viewProduct": "View product",
         "shop": "Browse all products"
       }
+    },
+    "cms": {
+      "aboutTitle": "About Shajghor",
+      "privacyTitle": "Privacy Policy",
+      "termsTitle": "Terms of Service",
+      "returnsTitle": "Returns & Refunds",
+      "shippingTitle": "Shipping & Delivery",
+      "paymentTitle": "Payment Policy",
+      "empty": "This page has not been published yet."
+    },
+    "unsubscribe": {
+      "loading": "Please wait",
+      "successTitle": "Unsubscribed",
+      "errorTitle": "Unable to unsubscribe",
+      "loadingMessage": "Processing your unsubscribe request…",
+      "invalid": "This unsubscribe link is invalid.",
+      "successMessage": "You have been unsubscribed successfully.",
+      "errorMessage": "This unsubscribe link is invalid or could not be processed.",
+      "back": "Back to Shajghor"
     }
   },
   "admin": {

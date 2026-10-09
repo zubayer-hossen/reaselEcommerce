@@ -18,14 +18,13 @@ export const createOrder = asyncHandler(async (req, res) => {
 
   // A payment method is accepted only if the owner has configured it (same rule as the checkout screen).
   const pay = (await SiteSetting.getMain()).payment || {};
-  const methodOk = {
-    cod: pay.codEnabled !== false,
-    bkash: !!pay.bkash?.number,
-    nagad: !!pay.nagad?.number,
-    bank: !!pay.bank?.accountNumber,
-    other: !!(pay.other?.instructions?.bn || pay.other?.instructions?.en),
-  }[body.paymentMethod];
-  if (!methodOk) throw new ApiError(400, 'This payment method is not available', { paymentMethod: ['This payment method is not available'] });
+  // Store policy: only bKash/Nagad are accepted; every order needs a Tk 150 advance.
+  const methodOk = ['bkash', 'nagad'].includes(body.paymentMethod)
+    && !!pay[body.paymentMethod]?.number;
+  if (!methodOk) throw new ApiError(400, 'Only configured bKash or Nagad advance payment is accepted', { paymentMethod: ['Choose bKash or Nagad'] });
+  if (Number(body.payment?.amount) !== 150) {
+    throw new ApiError(400, 'A Tk 150 advance payment is required', { 'payment.amount': ['Enter the required Tk 150 advance amount'] });
+  }
 
   // 1. Price everything again from the database. The browser's prices are never trusted.
   const quote = await priceCart({ items: body.items, deliveryArea: body.deliveryArea, couponCode: body.couponCode });
@@ -33,6 +32,7 @@ export const createOrder = asyncHandler(async (req, res) => {
   if (quote.issues.length) throw new ApiError(409, 'Some items in your cart changed', { code: 'cart_issues', issues: quote.issues });
   if (body.couponCode && quote.couponError) throw new ApiError(409, 'This coupon cannot be used', { code: 'coupon_error', couponError: quote.couponError });
   if (quote.deliveryCharge === null) throw new ApiError(400, 'Choose a delivery area', { deliveryArea: ['Choose a delivery area'] });
+  if (quote.total < 150) throw new ApiError(400, 'Order total must be at least Tk 150', { 'payment.amount': ['The order total must be at least Tk 150'] });
   if (body.expectedTotal != null && body.expectedTotal !== quote.total) {
     throw new ApiError(409, 'The total has changed', { code: 'price_changed', total: quote.total });
   }
@@ -87,8 +87,10 @@ export const createOrder = asyncHandler(async (req, res) => {
       discount: quote.discount,
       coupon: quote.coupon ? { code: quote.coupon.code, amount: quote.discount } : undefined,
       total: quote.total,
+      advanceAmount: 150,
+      balanceDue: Math.max(0, quote.total - 150),
       paymentMethod: method,
-      paymentStatus: method === 'cod' ? 'pending' : 'submitted',
+      paymentStatus: 'submitted',
       note: body.note,
       meta: {
         ip: req.ip,
@@ -104,7 +106,7 @@ export const createOrder = asyncHandler(async (req, res) => {
       order: order._id, orderNo: order.orderNo, method, amount: p.amount ?? quote.total,
       senderPhone: p.senderPhone, trxId: p.trxId, bankName: p.bankName, reference: p.reference,
       provider: p.provider, paymentDate: p.paymentDate, notes: p.notes,
-      status: method === 'cod' ? 'pending' : 'submitted',
+      status: 'submitted',
     });
   } catch (err) {
     // Something failed after stock was taken: put everything back.
@@ -136,7 +138,7 @@ export const createOrder = asyncHandler(async (req, res) => {
     title: { bn: 'নতুন অর্ডার', en: 'New order' },
     body: { bn: `${order.orderNo} · ${order.customer.name} · ${money}`, en: `${order.orderNo} · ${order.customer.name} · ${money}` },
   });
-  if (order.paymentMethod !== 'cod') {
+  {
     await notify({
       type: 'payment_submitted', permission: 'payments:update', link,
       title: { bn: 'পেমেন্ট যাচাই করুন', en: 'Payment to verify' },
@@ -159,6 +161,8 @@ export const createOrder = asyncHandler(async (req, res) => {
         deliveryCharge: order.deliveryCharge,
         discount: order.discount,
         total: order.total,
+        advanceAmount: order.advanceAmount,
+        balanceDue: order.balanceDue,
         customer: { name: order.customer.name, phone: order.customer.phone },
         items: order.items.map((i) => ({ name: i.name, image: i.image, size: i.size, color: i.color, price: i.price, qty: i.qty })),
       },

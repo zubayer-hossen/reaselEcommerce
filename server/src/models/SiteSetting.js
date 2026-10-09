@@ -7,6 +7,13 @@ const siteSettingSchema = new mongoose.Schema(
     key: { type: String, default: 'main', unique: true },
     siteName: { type: localized, default: () => ({ bn: 'সাজঘর', en: 'Shajghor' }) },
     about: localized,
+    policies: {
+      privacy: localized,
+      terms: localized,
+      returns: localized,
+      shipping: localized,
+      payment: localized,
+    },
     logo: String,
     favicon: String,
     contact: {

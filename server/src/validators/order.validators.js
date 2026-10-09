@@ -57,9 +57,13 @@ export const createOrderSchema = z
     const need = (field, message) => {
       if (!p[field]) ctx.addIssue({ code: 'custom', path: ['payment', field], message });
     };
+    if (!['bkash', 'nagad'].includes(v.paymentMethod)) {
+      ctx.addIssue({ code: 'custom', path: ['paymentMethod'], message: 'Only bKash or Nagad is accepted' });
+    }
     if (v.paymentMethod === 'bkash' || v.paymentMethod === 'nagad') {
       need('senderPhone', 'Enter the number you paid from');
       need('trxId', 'Enter the transaction ID');
+      if (p.amount !== 150) ctx.addIssue({ code: 'custom', path: ['payment', 'amount'], message: 'Advance amount must be exactly Tk 150' });
     }
     if (v.paymentMethod === 'bank') {
       need('bankName', 'Enter the bank name');

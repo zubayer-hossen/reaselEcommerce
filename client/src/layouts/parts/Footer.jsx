@@ -49,8 +49,14 @@ export default function Footer() {
           <Link to="/shop" className={link}>{t('nav.products')}</Link>
           <Link to="/track" className={link}>{t('nav.track')}</Link>
           <Link to="/faq" className={link}>{t('nav.faq')}</Link>
+          <Link to="/about" className={link}>{t('public.cms.aboutTitle')}</Link>
           <Link to="/contact" className={link}>{t('nav.contact')}</Link>
           <Link to="/cart" className={link}>{t('nav.cart')}</Link>
+          <Link to="/privacy" className={link}>{t('public.footer.privacy')}</Link>
+          <Link to="/terms" className={link}>{t('public.footer.terms')}</Link>
+          <Link to="/returns" className={link}>{t('public.footer.returns')}</Link>
+          <Link to="/shipping" className={link}>{t('public.footer.shipping')}</Link>
+          <Link to="/payment" className={link}>{t('public.footer.payment')}</Link>
         </div>
 
         <div className="rounded-card border border-line bg-surface-2 p-4">

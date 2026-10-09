@@ -22,6 +22,8 @@ import Marketing from './pages/Marketing.jsx';
 import Subscribers from './pages/Subscribers.jsx';
 import Campaigns from './pages/Campaigns.jsx';
 import Ads from './pages/Ads.jsx';
+import Settings from './pages/Settings.jsx';
+import Homepage from './pages/Homepage.jsx';
 import ComingSoon from './pages/ComingSoon.jsx';
 
 // Mounted at /admin/* (lazy-loaded, so customers never download admin code).
@@ -52,6 +54,8 @@ export default function AdminApp() {
           <Route path="subscribers" element={<RequirePermission perm="marketing:manage"><Subscribers /></RequirePermission>} />
           <Route path="campaigns" element={<RequirePermission perm="marketing:manage"><Campaigns /></RequirePermission>} />
           <Route path="ads" element={<RequirePermission perm="ads:manage"><Ads /></RequirePermission>} />
+          <Route path="settings" element={<RequirePermission perm="settings:read"><Settings /></RequirePermission>} />
+          <Route path="homepage" element={<RequirePermission perm="content:manage"><Homepage /></RequirePermission>} />
           <Route path=":section" element={<ComingSoon />} />
         </Route>
       </Routes>

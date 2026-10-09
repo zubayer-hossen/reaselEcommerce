@@ -7,7 +7,7 @@ import { SiteSetting } from '../models/SiteSetting.js';
 //   cp settings.example.json settings.local.json   (edit it — settings.local.json is git-ignored)
 //   npm run settings:apply
 // Each top-level key you include REPLACES that whole section (e.g. "payment" or "deliveryZones").
-const ALLOWED = ['siteName', 'about', 'contact', 'social', 'currency', 'deliveryZones', 'payment', 'announcement', 'maintenance'];
+const ALLOWED = ['siteName', 'about', 'policies', 'contact', 'social', 'currency', 'deliveryZones', 'payment', 'announcement', 'maintenance', 'seo', 'logo', 'favicon', 'defaultTheme'];
 
 async function run() {
   const file = process.argv[2] || 'settings.local.json';

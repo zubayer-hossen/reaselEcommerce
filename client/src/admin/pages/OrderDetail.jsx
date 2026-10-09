@@ -110,7 +110,7 @@ export default function OrderDetail() {
   const exits = allowedNext.filter((s) => !MAIN_FLOW.includes(s) || s !== nextMain);
   const wa = `https://wa.me/88${o.customer.phone}`;
   const addressLine = [o.customer.address, o.customer.area, o.customer.district, o.customer.postalCode].filter(Boolean).join(', ');
-  const mismatch = payment && payment.amount !== o.total && o.paymentMethod !== 'cod';
+  const mismatch = payment && payment.amount !== (o.advanceAmount ?? o.total) && o.paymentMethod !== 'cod';
   const releases = ['cancelled', 'failed', 'returned'].includes(target);
   const showEta = target && !['cancelled', 'failed', 'returned', 'delivered'].includes(target);
 
@@ -177,6 +177,8 @@ export default function OrderDetail() {
           {o.discount > 0 && <Row label={`${t('public.cart.discount')}${o.coupon?.code ? ` (${o.coupon.code})` : ''}`}>-{formatMoney(o.discount, lang)}</Row>}
           <Row label={t('public.cart.deliveryCharge')}>{formatMoney(o.deliveryCharge, lang)}</Row>
           <div className="flex justify-between border-t border-line pt-2 text-lg font-bold"><dt>{t('public.cart.total')}</dt><dd className="text-primary">{formatMoney(o.total, lang)}</dd></div>
+          <Row label={lang === 'bn' ? 'অগ্রিম জমা (যাচাই সাপেক্ষে)' : 'Advance submitted (pending verification)'}>{formatMoney(o.advanceAmount ?? 150, lang)}</Row>
+          <Row label={lang === 'bn' ? 'বাকি পরিশোধযোগ্য' : 'Remaining balance'}>{formatMoney(o.balanceDue ?? Math.max(0, o.total - 150), lang)}</Row>
         </dl>
       </Card>
 
@@ -196,7 +198,7 @@ export default function OrderDetail() {
           </>}
         </dl>
         {mismatch && (
-          <p role="alert" className="mt-2 flex items-start gap-2 rounded-control bg-warning/15 px-3 py-2 text-sm"><AlertTriangle size={18} className="mt-0.5 shrink-0 text-warning" /> {t('admin.orders.mismatch')} ({formatMoney(payment.amount, lang)} ≠ {formatMoney(o.total, lang)})</p>
+          <p role="alert" className="mt-2 flex items-start gap-2 rounded-control bg-warning/15 px-3 py-2 text-sm"><AlertTriangle size={18} className="mt-0.5 shrink-0 text-warning" /> {t('admin.orders.mismatch')} ({formatMoney(payment.amount, lang)} ≠ {formatMoney(o.advanceAmount ?? 150, lang)})</p>
         )}
         {o.paymentMethod === 'cod' && o.paymentStatus === 'pending' && <p className="mt-2 text-sm text-muted">{t('admin.orders.codNote')}</p>}
         {canPay && payment && o.paymentMethod !== 'cod' && (

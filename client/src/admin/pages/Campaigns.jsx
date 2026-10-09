@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Megaphone, Plus, Eye, XCircle, Send } from 'lucide-react';
 import { api } from '../../api/client.js';
 import { useLanguage } from '../../contexts/LanguageContext.jsx';
-import { useToast } from '../../contexts/ToastContext.jsx';
+import { useToast } from '../../components/ui/Toast.jsx';
 import Button from '../../components/ui/Button.jsx';
 import Input from '../../components/ui/Input.jsx';
 import BottomSheet from '../../components/ui/BottomSheet.jsx';

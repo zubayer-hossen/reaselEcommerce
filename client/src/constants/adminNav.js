@@ -21,6 +21,7 @@ export const ADMIN_NAV = [
   { key: 'ads', path: '/admin/ads', icon: Image, perm: 'ads:manage' },
   { key: 'chatbot', path: '/admin/chatbot', icon: Bot, perm: 'chatbot:manage' },
   { key: 'content', path: '/admin/content', icon: FileText, perm: 'content:manage' },
+  { key: 'homepage', path: '/admin/homepage', icon: LayoutDashboard, perm: 'content:manage' },
   { key: 'faq', path: '/admin/faq', icon: HelpCircle, perm: 'content:manage' },
   { key: 'settings', path: '/admin/settings', icon: Settings, perm: 'settings:read' },
   { key: 'admins', path: '/admin/admins', icon: ShieldCheck, perm: 'admins:manage' },

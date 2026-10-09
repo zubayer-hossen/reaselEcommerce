@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { Wrench } from 'lucide-react';
 import { SettingsProvider, useSettings } from '../contexts/SettingsContext.jsx';
 import { CartProvider } from '../contexts/CartContext.jsx';
+import { HomepageProvider } from '../contexts/HomepageContext.jsx';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
 import { localized } from '../utils/format.js';
 import AnnouncementBar from './parts/AnnouncementBar.jsx';
@@ -49,9 +50,11 @@ function Shell() {
 export default function PublicLayout() {
   return (
     <SettingsProvider>
-      <CartProvider>
-        <Shell />
-      </CartProvider>
+      <HomepageProvider>
+        <CartProvider>
+          <Shell />
+        </CartProvider>
+      </HomepageProvider>
     </SettingsProvider>
   );
 }

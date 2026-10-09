@@ -40,6 +40,8 @@ const orderSchema = new mongoose.Schema(
     discount: { type: Number, default: 0 },
     coupon: { code: String, amount: Number },
     total: { type: Number, required: true },
+    advanceAmount: { type: Number, default: 150, min: 0 },
+    balanceDue: { type: Number, default: 0, min: 0 },
     paymentMethod: { type: String, enum: PAYMENT_METHODS, required: true },
     paymentStatus: { type: String, enum: PAYMENT_STATUS, default: 'pending' },
     orderStatus: { type: String, enum: ORDER_STATUS, default: 'pending', index: true },

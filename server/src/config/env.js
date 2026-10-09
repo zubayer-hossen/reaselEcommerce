@@ -22,6 +22,7 @@ export const env = {
   isProd,
   mongoUri: process.env.MONGO_URI || '',
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+  authCookieDomain: process.env.AUTH_COOKIE_DOMAIN || '',
   orderPrefix: process.env.ORDER_PREFIX || 'SAJ',
   cloudinary: {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME || '',

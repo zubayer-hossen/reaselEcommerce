@@ -9,6 +9,6 @@ export const imageSchema = new Schema(
 );
 
 export const seoSchema = new Schema(
-  { title: String, description: String, keywords: [String], ogImage: String },
+  { title: localized, description: localized, keywords: localized, ogImage: String },
   { _id: false }
 );

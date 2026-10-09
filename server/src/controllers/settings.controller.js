@@ -16,6 +16,7 @@ export const publicSettings = asyncHandler(async (req, res) => {
     data: {
       siteName: s.siteName,
       about: s.about,
+      policies: s.policies,
       logo: s.logo,
       favicon: s.favicon,
       contact: s.contact,

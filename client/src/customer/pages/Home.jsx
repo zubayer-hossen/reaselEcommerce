@@ -9,24 +9,28 @@ import FaqSection from '../../sections/FaqSection.jsx';
 import FinalCta from '../../sections/FinalCta.jsx';
 import AdSlot from '../../components/AdSlot.jsx';
 import AdPopup from '../../components/AdPopup.jsx';
+import { useHomepage } from '../../contexts/HomepageContext.jsx';
 
-// Section order here is fixed for now; the CMS phase makes it admin-reorderable (HomepageSection).
 export default function Home() {
   const { t } = useLanguage();
-  return (
-    <>
-      <AdPopup />
-      <AdSlot placement="home_hero" className="mt-4 md:mt-6" />
-      <Hero />
-      <TrustBadges />
-      <AdSlot placement="home_banner" className="mt-10" />
-      <TrackBox />
-      <CategoryGrid />
-      <ProductRail title={t('public.featured.title')} params={{ featured: 'true', limit: 8 }} viewAllTo="/shop?featured=true" />
-      <ProductRail title={t('public.newArrivals.title')} params={{ isNew: 'true', limit: 8 }} viewAllTo="/shop?isNew=true" />
-      <HowItWorks />
-      <FaqSection />
-      <FinalCta />
-    </>
-  );
+  const { sections } = useHomepage();
+  const order = sections?.length ? sections : [
+    { key:'hero',enabled:true },{ key:'trust',enabled:true },{ key:'track',enabled:true },{ key:'categories',enabled:true },
+    { key:'featured',enabled:true },{ key:'newArrivals',enabled:true },{ key:'howItWorks',enabled:true },{ key:'faq',enabled:true },{ key:'finalCta',enabled:true },
+  ];
+  const render = (key) => {
+    switch(key) {
+      case 'hero': return <><AdSlot placement="home_hero" className="mt-4 md:mt-6" /><Hero /></>;
+      case 'trust': return <TrustBadges />;
+      case 'track': return <TrackBox />;
+      case 'categories': return <CategoryGrid />;
+      case 'featured': return <ProductRail title={t('public.featured.title')} params={{ featured:'true', limit:8 }} viewAllTo="/shop?featured=true" />;
+      case 'newArrivals': return <ProductRail title={t('public.newArrivals.title')} params={{ isNew:'true', limit:8 }} viewAllTo="/shop?isNew=true" />;
+      case 'howItWorks': return <HowItWorks />;
+      case 'faq': return <><AdSlot placement="home_banner" className="mt-10" /><FaqSection /></>;
+      case 'finalCta': return <FinalCta />;
+      default: return null;
+    }
+  };
+  return <><AdPopup />{order.filter(x=>x.enabled).sort((a,b)=>(a.sortOrder||0)-(b.sortOrder||0)).map(x=><div key={x.key}>{render(x.key)}</div>)}</>;
 }

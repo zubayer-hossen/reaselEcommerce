@@ -47,3 +47,11 @@ Checkout only offers payment methods that are filled in here (Cash on delivery i
 The 24/7 assistant answers from real data (your products, FAQs, delivery charges, payment methods, contact details). For your own rules —
 returns, exchanges, delivery time — teach it in **Admin → Chatbot** (use "Test the bot" to try it). Questions it could not answer are listed
 there so you can teach it.
+
+## Payment & delivery policy (production)
+- Checkout accepts only configured bKash or Nagad; Cash on Delivery, bank transfer, and other methods are disabled.
+- Every order requires a Tk 150 advance. The customer submits sender phone, TrxID, and amount; the payment remains pending admin verification.
+- Delivery charge is enforced as Tk 0 server-side for every valid delivery zone.
+- Configure both bKash and Nagad recipient numbers in Admin Settings before launch. Remaining balance is shown as order total minus the Tk 150 advance.
+
+Before opening checkout to customers, configure both real bKash/Nagad recipient numbers in Admin Settings and test an order end-to-end. The system records the customer-reported sender number and TrxID; it does not automatically verify transfers through a payment gateway.

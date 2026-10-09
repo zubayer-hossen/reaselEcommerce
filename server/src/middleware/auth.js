@@ -7,6 +7,13 @@ import { permissionsFor } from '../config/permissions.js';
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
+// Refresh/logout use the HTTP-only refresh cookie but do not require an access token.
+// Keep the same custom-header CSRF defence used by authenticated writes.
+export const requireCookieWrite = (req, res, next) => {
+  if (SAFE_METHODS.has(req.method) || req.get('x-requested-with') === 'XMLHttpRequest') return next();
+  next(new ApiError(403, 'Invalid request origin'));
+};
+
 export const requireAuth = asyncHandler(async (req, res, next) => {
   // CSRF defence: cookie-authenticated writes must carry a custom header.
   // Browsers only send it cross-site after a CORS preflight, which our CORS policy rejects.

@@ -209,3 +209,101 @@ Not deployed.
 - Extended `/admin/ads` with 7/30/90-day performance summaries and per-ad CTR table.
 - Fixed the existing Ads admin page to use the project's real `api/client.js`; the previous `../../utils/api.js` import did not exist.
 - Date-range analytics only includes events recorded after `AdMetricEvent` was introduced; historical cumulative counters are not retroactively convertible into dated events.
+
+## Phase 11-1 — Site Settings Admin Panel
+- Added protected admin settings API: `GET /api/admin/settings` (`settings:read`) and `PATCH /api/admin/settings` (`settings:write`).
+- Added Zod validation for editable SiteSetting fields, delivery zones, payment configuration, announcement, maintenance and SEO.
+- Added `client/src/admin/pages/Settings.jsx` and mounted `/admin/settings` using the existing `settings:read` permission.
+- Owner/admin can manage store identity, contact/social links, delivery charges, payment methods, announcement bar and maintenance mode without editing code.
+- Sensitive SMTP credentials remain environment-only and are not part of SiteSetting.
+
+## Phase 11-4 — SEO & Metadata CMS
+- Exposed the existing `SiteSetting.seo` fields in the protected admin Settings page: localized default title, description, keywords and Open Graph image.
+- Public Settings already returns the safe `seo` object; no duplicate SEO model was created.
+- `SettingsContext` now applies global default title/meta/OG tags and a configured favicon from SiteSetting.
+- Hardened `useSeo` so page-level SEO overrides restore the previous global/default metadata on unmount instead of permanently losing it.
+- Existing product/category/page-specific SEO remains supported and can override the global defaults.
+- Client dependency installation/build was attempted but exceeded the execution timeout; server syntax and i18n JSON checks pass.
+
+## Phase 11-5 — Homepage Hero CMS Integration (2026-10-09)
+- Wired the existing `HomepageSection` hero record to actual Hero presentation.
+- Added localized badge/body plus desktop/mobile image and video URL fields.
+- Admin Homepage editor now saves these existing section fields; no duplicate banner/hero model introduced.
+- Public Home now consumes the existing `HomepageProvider` rather than issuing a second homepage request.
+- Hero supports responsive image/video backgrounds with accessible decorative treatment and CMS-controlled CTA.
+- Verification: static inspection performed; full client build/runtime remains unverified because dependency installation was not completed in the previous phase.
+
+## Phase 11-6 — Policy Pages CMS (2026-10-09)
+- Extended the existing `SiteSetting` singleton with localized customer-facing policy content for privacy, terms, returns/refunds, shipping/delivery and payment.
+- Public `/api/settings/public` now exposes only the safe policy content alongside existing public settings.
+- Added `client/src/customer/pages/CmsPage.jsx` and routes for `/privacy`, `/terms`, `/returns`, `/shipping`, and `/payment`.
+- Admin `/admin/settings` now provides bilingual textarea controls for these policy pages; existing settings RBAC and validation are reused.
+- Footer links now expose the policy pages; no separate CMS/page model was introduced.
+- Content is rendered as plain text paragraphs rather than unsanitized HTML, reducing XSS risk from editable CMS content.
+- Verification: server `.js` syntax and all i18n JSON files pass; JSX was structurally inspected. Full Vite/browser/MongoDB runtime remains unverified.
+### Phase 11-7 — About / Store Story CMS
+- Reused existing `SiteSetting.about` instead of introducing a duplicate content model.
+- Added bilingual admin editing for About content.
+- Added public `/about` page using the shared CMS page renderer with plain-text paragraph rendering.
+- Added About link to the public footer.
+- No new API/model required because existing public settings already expose `about`.
+
+### Phase 11-7A — Public hardcoded-copy audit (2026-10-09)
+- Audited customer-facing JSX for remaining hardcoded copy.
+- Fixed `client/src/customer/pages/Unsubscribe.jsx`: visible loading/success/error headings and fallback messages now use the existing Bangla/English i18n system instead of hardcoded English strings.
+- Kept intentional examples/placeholders (e.g. order-number format) and static technical labels out of CMS; they are not store content.
+- No new model/API was introduced.
+### Phase 11-8 — CMS Integration Audit
+- Audited SiteSetting/About/Policy/SEO/Homepage CMS integration for duplicate or mismatched flows.
+- Aligned `SiteSetting.seo` schema with the bilingual SEO structure used by the admin validator/UI (`title`, `description`, `keywords` as localized objects).
+- Extended `settings:apply` allowed keys so policies, SEO, logo, favicon and defaultTheme can be applied through the existing settings utility.
+- Applied global CMS SEO metadata from `SettingsContext` (title, description, keywords, OG tags, Twitter card, favicon).
+- Hardened `useSeo` so page-specific metadata temporarily overrides global metadata and restores it on unmount.
+- No new settings model, duplicate CMS API, or duplicate public page system introduced.
+- Static syntax/i18n validation passed; browser build, MongoDB persistence and deployed runtime remain unverified.
+
+
+### Phase 11-9 — Public CMS Routing & Experience Audit (2026-10-09)
+- Verified public CMS routes use explicit slugs for `/about`, `/privacy`, `/terms`, `/returns`, `/shipping`, and `/payment`.
+- Shared `CmsPage.jsx` supports both route-provided slugs and URL params, with localized content and page SEO.
+- Footer exposes all six CMS pages, including Payment Policy.
+- Public settings safely expose About, Policies and SEO from the existing SiteSetting singleton.
+- No duplicate CMS model/API/page components were introduced.
+- Verification: server syntax, i18n JSON, route/source inspection and ZIP integrity passed; browser/Vite/MongoDB runtime remains unverified.
+
+### Phase 11-10 — CMS Completeness Audit (2026-10-09)
+- Final Phase 11 CMS chain audit confirms SiteSetting, validators, public settings, Admin Settings, shared CmsPage, routes, Footer and SEO integration are aligned.
+- About, policy and SEO CMS controls are all reachable through the existing admin settings system and public settings flow.
+- Phase 11 CMS feature work is considered complete pending full integration/runtime testing.
+
+
+## Phase 25 — Integration Testing & Production-Readiness Audit
+
+- Server JavaScript syntax validation passed for all `server/src/**/*.js` files.
+- All client/server JSON files parsed successfully.
+- Static relative-import audit initially found four stale `ToastContext.jsx` imports and a stale `rateLimiters` import in `review.routes.js`.
+- Fixed those imports to the existing `components/ui/Toast.jsx` and `reviewLimiter` export.
+- Re-ran relative-import audit successfully: all relative imports resolve.
+- Dependency installation timed out before a reliable Vite build could run; client build, browser E2E, MongoDB, SMTP delivery, and deployed runtime remain unverified.
+
+## Phase 11-12 — Build Recovery Audit (2026-10-09)
+
+- Audited root/client/server package structure and dependency manifests.
+- Root package-lock.json is metadata-only; client/server do not have lockfiles.
+- No client/server node_modules are present in the snapshot.
+- Dependency installation was attempted previously but timed out; therefore Vite build and runtime are not claimed as verified.
+- Static relative-import audit reports 0 missing local JS/JSX/JSON import targets.
+- No additional source changes were required in this recovery step.
+
+
+### Phase 27 — Security/API contract audit
+- Audited cookie authentication, CORS/CSRF defence, public tracking, guest checkout, admin RBAC, uploads, public settings, rate limits and error handling.
+- Fixed refresh/logout CSRF gap: both refresh-cookie endpoints now require the same `X-Requested-With: XMLHttpRequest` custom header defence used by authenticated writes.
+- No access-token requirement was added to logout, so expired-access-token logout remains possible.
+- Static checks only; MongoDB/runtime/build/deployment remain unverified.
+
+## Payment & delivery policy (production)
+- Checkout accepts only configured bKash or Nagad; Cash on Delivery, bank transfer, and other methods are disabled.
+- Every order requires a Tk 150 advance. The customer submits sender phone, TrxID, and amount; the payment remains pending admin verification.
+- Delivery charge is enforced as Tk 0 server-side for every valid delivery zone.
+- Configure both bKash and Nagad recipient numbers in Admin Settings before launch. Remaining balance is shown as order total minus the Tk 150 advance.

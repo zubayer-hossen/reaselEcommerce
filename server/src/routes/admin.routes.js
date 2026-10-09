@@ -30,10 +30,22 @@ import * as campaigns from '../controllers/campaigns.controller.js';
 import * as ads from '../controllers/ads.controller.js';
 import { adCreateSchema, adUpdateSchema, adListQuery, adAnalyticsQuery } from '../validators/ad.validators.js';
 import { campaignCreateSchema, campaignUpdateSchema, campaignListQuery, campaignSendSchema } from '../validators/campaign.validators.js';
+import { siteSettingsUpdateSchema } from '../validators/settings.validators.js';
+import * as settings from '../controllers/adminSettings.controller.js';
+import * as homepage from '../controllers/homepage.controller.js';
+import { homepageSectionUpdateSchema, homepageReorderSchema } from '../validators/homepage.validators.js';
 
 // Everything under /api/admin requires a signed-in admin. Later phases add routers here.
 const router = Router();
 router.use(requireAuth);
+
+router.get('/settings', can('settings:read'), settings.getSettings);
+router.patch('/settings', can('settings:write'), validate(siteSettingsUpdateSchema), settings.updateSettings);
+
+// Homepage CMS
+router.get('/homepage', can('content:manage'), homepage.listAdmin);
+router.patch('/homepage/:id', can('content:manage'), validate(homepageSectionUpdateSchema), homepage.update);
+router.post('/homepage/reorder', can('content:manage'), validate(homepageReorderSchema), homepage.reorder);
 
 router.get('/ping', can('dashboard:view'), (req, res) => {
   res.json({ success: true, message: 'pong', data: { role: req.admin.role } });

@@ -56,7 +56,7 @@ export default function PaymentSection({ methods, method, onMethod, pay, values,
           <CopyValue label={t(`public.checkout.methods.${method}`)} value={pay[method]?.number} />
           <Input label={t('public.checkout.senderPhone')} inputMode="tel" autoComplete="tel" value={values.senderPhone} error={err('senderPhone')} onChange={set('senderPhone')} />
           <Input label={t('public.checkout.trxId')} autoCapitalize="characters" value={values.trxId} error={err('trxId')} onChange={set('trxId')} />
-          <Input label={t('public.checkout.amount')} type="number" inputMode="numeric" min="1" value={values.amount} error={err('amount')} onChange={set('amount')} />
+          <Input label={t('public.checkout.amount')} type="number" inputMode="numeric" min="150" value={values.amount} onChange={set('amount')} hint={lang === 'bn' ? 'অগ্রিম ঠিক ১৫০ টাকা লিখুন' : 'Enter exactly Tk 150 as the advance'} error={err('amount')} />
         </div>
       )}
 

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Mail, Trash2, UserCheck, UserX } from 'lucide-react';
 import { api } from '../../api/client.js';
 import { useLanguage } from '../../contexts/LanguageContext.jsx';
-import { useToast } from '../../contexts/ToastContext.jsx';
+import { useToast } from '../../components/ui/Toast.jsx';
 import Input from '../../components/ui/Input.jsx';
 import Button from '../../components/ui/Button.jsx';
 import ConfirmSheet from '../../components/ui/ConfirmSheet.jsx';

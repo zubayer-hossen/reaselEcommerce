@@ -11,6 +11,7 @@ import Track from '../customer/pages/Track.jsx';
 import Contact from '../customer/pages/Contact.jsx';
 import Faq from '../customer/pages/Faq.jsx';
 import Unsubscribe from '../customer/pages/Unsubscribe.jsx';
+import CmsPage from '../customer/pages/CmsPage.jsx';
 
 const AdminApp = lazy(() => import('../admin/AdminApp.jsx'));
 
@@ -32,6 +33,12 @@ export default function AppRoutes() {
         <Route path="contact" element={<Contact />} />
         <Route path="faq" element={<Faq />} />
         <Route path="unsubscribe" element={<Unsubscribe />} />
+        <Route path="about" element={<CmsPage slug="about" />} />
+        <Route path="privacy" element={<CmsPage slug="privacy" />} />
+        <Route path="terms" element={<CmsPage slug="terms" />} />
+        <Route path="returns" element={<CmsPage slug="returns" />} />
+        <Route path="shipping" element={<CmsPage slug="shipping" />} />
+        <Route path="payment" element={<CmsPage slug="payment" />} />
         <Route path="*" element={<Home />} />
       </Route>
     </Routes>

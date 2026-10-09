@@ -66,11 +66,11 @@ export async function priceCart({ items, deliveryArea, couponCode }) {
 
   // delivery
   const settings = await SiteSetting.getMain();
-  const zones = settings.deliveryZones.map((z) => ({ key: z.key, name: z.name, charge: z.charge }));
+  const zones = settings.deliveryZones.map((z) => ({ key: z.key, name: z.name, charge: 0 }));
   let deliveryCharge = null;
   if (deliveryArea) {
     const zone = zones.find((z) => z.key === deliveryArea);
-    if (zone) deliveryCharge = zone.charge;
+    if (zone) deliveryCharge = 0; // Shajghor policy: delivery is always free.
     else issues.push({ code: 'invalid_delivery_area' });
   }
 

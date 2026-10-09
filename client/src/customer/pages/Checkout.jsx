@@ -41,21 +41,18 @@ export default function Checkout() {
 
   // only offer methods the owner has set up
   const methods = useMemo(() => [
-    pay.codEnabled !== false && 'cod',
     pay.bkash?.number && 'bkash',
     pay.nagad?.number && 'nagad',
-    pay.bank?.accountNumber && 'bank',
-    (pay.other?.instructions?.bn || pay.other?.instructions?.en) && 'other',
   ].filter(Boolean), [pay]);
   useEffect(() => { if (!method && methods.length) setMethod(methods[0]); }, [methods, method]);
 
   const lines = mergeLines(items, quote);
   const blocked = lines.some((l) => l.issue);
   const total = quote?.total ?? 0;
-  const charge = quote?.deliveryCharge;
+  const charge = quote?.deliveryCharge ?? 0;
 
-  // the money amount the customer reports defaults to the order total
-  useEffect(() => { if (quote && method !== 'cod') setPayment((p) => (p.amount === '' || p.amountAuto ? { ...p, amount: String(quote.total), amountAuto: true } : p)); }, [quote?.total, method]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Fixed advance policy: the customer submits exactly Tk 150 via bKash/Nagad.
+  useEffect(() => { if (method === 'bkash' || method === 'nagad') setPayment((p) => ({ ...p, amount: '150', amountAuto: true })); }, [method]);
 
   const setField = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const setPay = (k, v) => setPayment((p) => ({ ...p, [k]: v, ...(k === 'amount' ? { amountAuto: false } : {}) }));
@@ -78,7 +75,10 @@ export default function Checkout() {
     if (!form.district) e['customer.district'] = req;
     if (form.postalCode.trim() && !/^\d{4}$/.test(toAsciiDigits(form.postalCode.trim()))) e['customer.postalCode'] = t('public.checkout.badPostal');
     if (!deliveryArea) e.deliveryArea = t('public.cart.deliveryChoose');
+    if (!['bkash', 'nagad'].includes(method)) e.paymentMethod = lang === 'bn' ? 'বিকাশ অথবা নগদ নির্বাচন করুন' : 'Choose bKash or Nagad';
     if (method === 'bkash' || method === 'nagad') {
+      if (Number(payment.amount) !== 150) e['payment.amount'] = lang === 'bn' ? 'অগ্রিম ঠিক ১৫০ টাকা হতে হবে' : 'Advance payment must be exactly Tk 150';
+      if (Number(quote?.total) < 150) e['payment.amount'] = lang === 'bn' ? 'অর্ডারের মোট মূল্য কমপক্ষে ১৫০ টাকা হতে হবে' : 'Order total must be at least Tk 150';
       if (!isValidBdPhone(payment.senderPhone)) e['payment.senderPhone'] = t('public.checkout.badPhone');
       if (payment.trxId.trim().length < 4) e['payment.trxId'] = req;
     }
@@ -114,7 +114,7 @@ export default function Checkout() {
     if (blocked) { setBanner({ type: 'cart', text: t('public.checkout.errCart') }); return; }
 
     const pick = (obj, keys) => Object.fromEntries(keys.map((k) => [k, obj[k]]).filter(([, v]) => v !== '' && v != null));
-    const payKeys = { cod: [], bkash: ['senderPhone', 'trxId', 'amount'], nagad: ['senderPhone', 'trxId', 'amount'], bank: ['bankName', 'reference', 'amount', 'paymentDate'], other: ['provider', 'reference', 'senderPhone', 'amount', 'notes'] }[method];
+    const payKeys = { bkash: ['senderPhone', 'trxId', 'amount'], nagad: ['senderPhone', 'trxId', 'amount'] }[method];
     const payload = pick({ ...payment, amount: payment.amount === '' ? '' : Number(payment.amount) }, payKeys);
     if (payload.senderPhone) payload.senderPhone = toAsciiDigits(payload.senderPhone);
 
@@ -127,7 +127,7 @@ export default function Checkout() {
         district: form.district, area: form.area.trim(), postalCode: toAsciiDigits(form.postalCode.trim()),
       },
       paymentMethod: method,
-      payment: method === 'cod' ? undefined : payload,
+      payment: payload,
       note: form.note.trim(),
       marketingConsent: { email: consent.email && !!form.email.trim(), sms: consent.sms },
       expectedTotal: quote.total,
@@ -252,6 +252,7 @@ export default function Checkout() {
           {/* Payment */}
           <section className="rounded-card border border-line bg-surface p-4 md:p-5">
             <h2 className="mb-4 font-semibold">{t('public.checkout.payment')}</h2>
+            <p className="mb-4 rounded-control border border-primary/20 bg-primary/5 p-3 text-sm">{lang === 'bn' ? 'অর্ডার নিশ্চিত করতে ১৫০ টাকা অগ্রিম বিকাশ/নগদে পাঠান। ডেলিভারি চার্জ সম্পূর্ণ ফ্রি। বাকি টাকা অর্ডার কনফার্মেশনের নির্দেশনা অনুযায়ী পরিশোধ করবেন।' : 'Pay a Tk 150 advance via bKash/Nagad to place your order. Delivery is completely free. Pay the remaining balance according to the order confirmation instructions.'}</p>
             {methods.length === 0 ? (
               <p className="text-muted">{t('public.checkout.noMethods')}</p>
             ) : (
